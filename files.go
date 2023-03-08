@@ -25,7 +25,7 @@ type FileReturn struct {
 }
 
 // AddFile is to upload a file
-func AddFile(file *os.File, name string, token string) (FileReturn, error) {
+func (c *Config) AddFile(file *os.File, name string) (FileReturn, error) {
 
 	// Create form data
 	body := &bytes.Buffer{}
@@ -55,10 +55,10 @@ func AddFile(file *os.File, name string, token string) (FileReturn, error) {
 	}
 
 	// Set config for new request
-	c := Config{"/v1/files/", "POST", token, writer.FormDataContentType(), body}
+	//c := NewConfig(, token, &http.Client{})
 
 	// Send request
-	response, err := c.Send()
+	response, err := c.Send("/v1/files/", body, "POST", writer.FormDataContentType())
 	if err != nil {
 		return FileReturn{}, err
 	}
