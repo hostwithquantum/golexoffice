@@ -32,7 +32,8 @@ type ContactsReturnContent struct {
 	Id             string                    `json:"id,omitempty"`
 	Version        int                       `json:"version,omitempty"`
 	Roles          ContactBodyRoles          `json:"roles"`
-	Company        ContactBodyCompany        `json:"company"`
+	Company        ContactBodyCompany        `json:"company,omitempty"`
+	Person         ContactBodyPerson         `json:"person,omitempty"`
 	Addresses      ContactBodyAddresses      `json:"addresses"`
 	EmailAddresses ContactBodyEmailAddresses `json:"emailAddresses"`
 	PhoneNumbers   ContactBodyPhoneNumbers   `json:"phoneNumbers"`
@@ -119,7 +120,8 @@ type ContactBody struct {
 	Id             string                    `json:"id,omitempty"`
 	Version        int                       `json:"version,omitempty"`
 	Roles          ContactBodyRoles          `json:"roles"`
-	Company        ContactBodyCompany        `json:"company"`
+	Company        ContactBodyCompany        `json:"company,omitempty"`
+	Person         ContactBodyPerson         `json:"person,omitempty"`
 	Addresses      ContactBodyAddresses      `json:"addresses"`
 	EmailAddresses ContactBodyEmailAddresses `json:"emailAddresses"`
 	PhoneNumbers   ContactBodyPhoneNumbers   `json:"phoneNumbers"`
@@ -146,6 +148,12 @@ type ContactBodyCompany struct {
 	VatRegistrationId    string                      `json:"vatRegistrationId"`
 	AllowTaxFreeInvoices bool                        `json:"allowTaxFreeInvoices"`
 	ContactPersons       []ContactBodyContactPersons `json:"contactPersons"`
+}
+
+type ContactBodyPerson struct {
+	Salutation string `json:"salutation"`
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
 }
 
 type ContactBodyContactPersons struct {
@@ -235,9 +243,7 @@ func Contacts(token string) ([]ContactsReturnContent, error) {
 		response.Body.Close()
 
 		// Add contacts
-		for _, value := range decode.Content {
-			contacts = append(contacts, value)
-		}
+		contacts = append(contacts, decode.Content...)
 
 		// Check length & break the loop
 		if decode.TotalPages == page {
