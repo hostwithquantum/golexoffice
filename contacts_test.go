@@ -69,6 +69,7 @@ func lexOfficeMock() *httptest.Server {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			if r.URL.Path == "/v1/contacts/c73d5f78-847e-49d8-aa58-c6d95c5c9cb5" {
+				//nolint:errcheck
 				w.Write([]byte(`{
 					"id":"c73d5f78-847e-49d8-aa58-c6d95c5c9cb5",
 					"organizationId":"67c8c57b-6d07-4bdd-b579-55240d3c2df5",
@@ -95,11 +96,12 @@ func lexOfficeMock() *httptest.Server {
 								"countryCode":"DE"
 							}]
 						},
-						"archived":false}`)) //nolint:errcheck
+						"archived":false}`))
 				return
 			}
 
 			if r.URL.Path == "/v1/contacts/e9066f04-8cc7-4616-93f8-ac9ecc8479c8" {
+				//nolint:errcheck
 				w.Write([]byte(`{
 					"id": "e9066f04-8cc7-4616-93f8-ac9ecc8479c8",
 					"organizationId": "aa93e8a8-2aa3-470b-b914-caad8a255dd8",
@@ -116,7 +118,7 @@ func lexOfficeMock() *httptest.Server {
 					},
 					"note": "Notizen",
 					"archived": false
-				}`)) //nolint:errcheck
+				}`))
 				return
 			}
 		}
@@ -125,19 +127,21 @@ func lexOfficeMock() *httptest.Server {
 			w.WriteHeader(http.StatusCreated)
 
 			if r.URL.Path == "/v1/contacts/" {
+				//nolint:errcheck
 				w.Write([]byte(`{
 					"id": "66196c43-baf3-4335-bfee-d610367059db",
 					"resourceUri": "https://api.lexoffice.io/v1/contacts/66196c43-bfee-baf3-4335-d610367059db",
 					"createdDate": "2016-06-29T15:15:09.447+02:00",
 					"updatedDate": "2016-06-29T15:15:09.447+02:00",
 					"version": 1
-				}`)) //nolint:errcheck
+				}`))
 				return
 			}
 		}
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(fmt.Sprintf("not found (%s): %s", r.Method, r.RequestURI))) //nolint:errcheck
+		//nolint:errcheck
+		w.Write([]byte(fmt.Sprintf("not found (%s): %s", r.Method, r.RequestURI)))
 	}))
 }

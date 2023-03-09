@@ -1,0 +1,25 @@
+---
+name: pr
+
+on:
+  pull_request:
+
+jobs:
+  golint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+      - uses: golangci/golangci-lint-action@v3
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+      - run: go generate ./...
+      - run: go test --race ./...
