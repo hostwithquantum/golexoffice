@@ -20,33 +20,50 @@ const (
 
 // Config is to define the request data
 type Config struct {
-	Path, Method, Token string
-	ContentType         string
-	Body                io.Reader
+	token   string
+	baseUrl string
+	client  *http.Client
+}
+
+func NewConfig(token string, httpClient *http.Client) *Config {
+	if httpClient == nil {
+		httpClient = &http.Client{}
+	}
+
+	return &Config{
+		token:  token,
+		client: httpClient,
+	}
+}
+
+func (c *Config) SetBaseUrl(url string) {
+	c.baseUrl = url
 }
 
 // Send is to send a new request
-func (c Config) Send() (*http.Response, error) {
+func (c *Config) Send(path string, body io.Reader, method, contentType string) (*http.Response, error) {
 
 	// Set url
-	url := baseURL + c.Path
-
-	// Define client
-	client := &http.Client{}
+	var url string
+	if c.baseUrl != "" {
+		url = c.baseUrl + path
+	} else {
+		url = baseURL + path
+	}
 
 	// Request
-	request, err := http.NewRequest(c.Method, url, c.Body)
+	request, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
 	}
 
 	// Define header
-	request.Header.Set("Authorization", "Bearer "+c.Token)
-	request.Header.Set("Content-Type", c.ContentType)
+	request.Header.Set("Authorization", "Bearer "+c.token)
+	request.Header.Set("Content-Type", contentType)
 	request.Header.Set("Accept", "application/json")
 
 	// Send request & get response
-	response, err := client.Do(request)
+	response, err := c.client.Do(request)
 	if err != nil {
 		return nil, err
 	}

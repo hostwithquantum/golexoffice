@@ -32,7 +32,8 @@ type ContactsReturnContent struct {
 	Id             string                    `json:"id,omitempty"`
 	Version        int                       `json:"version,omitempty"`
 	Roles          ContactBodyRoles          `json:"roles"`
-	Company        ContactBodyCompany        `json:"company"`
+	Company        ContactBodyCompany        `json:"company,omitempty"`
+	Person         ContactBodyPerson         `json:"person,omitempty"`
 	Addresses      ContactBodyAddresses      `json:"addresses"`
 	EmailAddresses ContactBodyEmailAddresses `json:"emailAddresses"`
 	PhoneNumbers   ContactBodyPhoneNumbers   `json:"phoneNumbers"`
@@ -119,7 +120,8 @@ type ContactBody struct {
 	Id             string                    `json:"id,omitempty"`
 	Version        int                       `json:"version,omitempty"`
 	Roles          ContactBodyRoles          `json:"roles"`
-	Company        ContactBodyCompany        `json:"company"`
+	Company        ContactBodyCompany        `json:"company,omitempty"`
+	Person         ContactBodyPerson         `json:"person,omitempty"`
 	Addresses      ContactBodyAddresses      `json:"addresses"`
 	EmailAddresses ContactBodyEmailAddresses `json:"emailAddresses"`
 	PhoneNumbers   ContactBodyPhoneNumbers   `json:"phoneNumbers"`
@@ -146,6 +148,12 @@ type ContactBodyCompany struct {
 	VatRegistrationId    string                      `json:"vatRegistrationId"`
 	AllowTaxFreeInvoices bool                        `json:"allowTaxFreeInvoices"`
 	ContactPersons       []ContactBodyContactPersons `json:"contactPersons"`
+}
+
+type ContactBodyPerson struct {
+	Salutation string `json:"salutation"`
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
 }
 
 type ContactBodyContactPersons struct {
@@ -203,7 +211,7 @@ type ContactReturn struct {
 }
 
 // Contacts is to get a list of all contacts
-func Contacts(token string) ([]ContactsReturnContent, error) {
+func (c *Config) Contacts() ([]ContactsReturnContent, error) {
 
 	// To save the contact data
 	var contacts []ContactsReturnContent
@@ -215,10 +223,10 @@ func Contacts(token string) ([]ContactsReturnContent, error) {
 	for {
 
 		// Set config for new request
-		c := Config{fmt.Sprintf("/v1/contacts?page=%d", page), "GET", token, "application/json", nil}
+		// c := NewConfig(, token, &http.Client{})
 
 		// Send request
-		response, err := c.Send()
+		response, err := c.Send(fmt.Sprintf("/v1/contacts?page=%d", page), nil, "GET", "application/json")
 		if err != nil {
 			return nil, err
 		}
@@ -235,9 +243,7 @@ func Contacts(token string) ([]ContactsReturnContent, error) {
 		response.Body.Close()
 
 		// Add contacts
-		for _, value := range decode.Content {
-			contacts = append(contacts, value)
-		}
+		contacts = append(contacts, decode.Content...)
 
 		// Check length & break the loop
 		if decode.TotalPages == page {
@@ -254,13 +260,13 @@ func Contacts(token string) ([]ContactsReturnContent, error) {
 }
 
 // Contact is to get a contact by id
-func Contact(id, token string) (ContactsReturnContent, error) {
+func (c *Config) Contact(id string) (ContactsReturnContent, error) {
 
 	// Set config for new request
-	c := Config{"/v1/contacts/" + id, "GET", token, "application/json", nil}
+	// c := NewConfig(, token, &http.Client{})
 
 	// Send request
-	response, err := c.Send()
+	response, err := c.Send("/v1/contacts/"+id, nil, "GET", "application/json")
 	if err != nil {
 		return ContactsReturnContent{}, err
 	}
@@ -282,7 +288,7 @@ func Contact(id, token string) (ContactsReturnContent, error) {
 }
 
 // AddContact is to add a new contact
-func AddContact(body ContactBody, token string) (ContactReturn, error) {
+func (c *Config) AddContact(body ContactBody) (ContactReturn, error) {
 
 	// Convert body
 	convert, err := json.Marshal(body)
@@ -291,10 +297,10 @@ func AddContact(body ContactBody, token string) (ContactReturn, error) {
 	}
 
 	// Set config for new request
-	c := Config{"/v1/contacts/", "POST", token, "application/json", bytes.NewBuffer(convert)}
+	// c := NewConfig(, token, &http.Client{})
 
 	// Send request
-	response, err := c.Send()
+	response, err := c.Send("/v1/contacts/", bytes.NewBuffer(convert), "POST", "application/json")
 	if err != nil {
 		return ContactReturn{}, err
 	}
@@ -316,7 +322,7 @@ func AddContact(body ContactBody, token string) (ContactReturn, error) {
 }
 
 // UpdateContact is to add a new contact
-func UpdateContact(body ContactBody, token string) (ContactReturn, error) {
+func (c *Config) UpdateContact(body ContactBody) (ContactReturn, error) {
 
 	// Convert body
 	convert, err := json.Marshal(body)
@@ -325,10 +331,10 @@ func UpdateContact(body ContactBody, token string) (ContactReturn, error) {
 	}
 
 	// Set config for new request
-	c := Config{"/v1/contacts/" + body.Id, "PUT", token, "application/json", bytes.NewBuffer(convert)}
+	// c := NewConfig(, token, &http.Client{})
 
 	// Send request
-	response, err := c.Send()
+	response, err := c.Send("/v1/contacts/"+body.Id, bytes.NewBuffer(convert), "PUT", "application/json")
 	if err != nil {
 		return ContactReturn{}, err
 	}

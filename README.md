@@ -1,12 +1,28 @@
-# Lexoffice for GO
+# LexOffice for GO
+
+> This started as a fork of the now archived `gooffice`. It has since moved namespaces. And is now
+> maintained by [Planetary Quantum GmbH](https://github.com/hostwithquantum).
 
 ## Install
 
 ```console
-go get github.com/jjideenschmiede/golexoffice
+go get github.com/hostwithquantum/golexoffice
 ```
 
 ## How to use?
+
+```go
+import(
+    "github.com/hostwithquantum/golexoffice"
+)
+
+func main() {
+    // initialize the client, http.Client is optional but allows you to set timeouts, etc.
+    client := golexoffice.NewConfig("token", &http.Client{})
+}
+```
+
+The following samples assumes you have the `client` setup.
 
 ### Get all contacts
 
@@ -14,7 +30,7 @@ To get all contacts you can perform the following function.
 
 ```go
 // Get all contacts
-contacts, err := golexoffice.Contacts("token")
+contacts, err := client.Contacts()
 if err != nil {
     fmt.Println(err)
 } else {
@@ -28,7 +44,7 @@ If you want to read out a specific contact, you can do this via the id (UUID).
 
 ```go
 // Get a contact by id
-contact, err := golexoffice.Contact("b324c2be-b745-4128-9ecd-e262a0a761cd", "token")
+contact, err := client.Contact("b324c2be-b745-4128-9ecd-e262a0a761cd")
 if err != nil {
     fmt.Println(err)
 } else {
@@ -45,10 +61,10 @@ To create a new contact, lexoffice needs some data. These must be entered in a s
 body := golexoffice.ContactBody{
     "",
     0,
-	golexoffice.ContactBodyRoles{
-    golexoffice.ContactBodyCustomer{},
-    golexoffice.ContactBodyVendor{},
-	},
+    golexoffice.ContactBodyRoles{
+        golexoffice.ContactBodyCustomer{},
+        golexoffice.ContactBodyVendor{},
+    },
     golexoffice.ContactBodyCompany{
         "J&J Ideenschmiede GmbH",
         "12345/12345",
@@ -93,11 +109,10 @@ body := golexoffice.ContactBody{
         []string{"04152 8903730"},
     },
     "Testnotiz",
-    false,
 }
 
-// Create new contact
-contactReturn, err := golexoffice.AddContact(body, "token")
+// Create a new contact
+contactReturn, err := client.AddContact(body)
 if err != nil {
     fmt.Println(err)
 } else {
@@ -114,7 +129,7 @@ If you want to update a contact, then some information is very important. You ne
 body := golexoffice.ContactBody{
     "ID",
     1,
-	golexoffice.ContactBodyRoles{
+    golexoffice.ContactBodyRoles{
         golexoffice.ContactBodyCustomer{},
         golexoffice.ContactBodyVendor{},
     },
@@ -165,22 +180,22 @@ body := golexoffice.ContactBody{
     false,
 }
 
-// Create new contact
-contactReturn, err := UpdateContact(body, "token")
+// Update the contact
+contactReturn, err := client.UpdateContact(body)
 if err != nil {
     fmt.Println(err)
 } else {
     fmt.Println(contactReturn)
 }
 ```
-    
+
 ### Get a invoice
 
 If you want to read out a specific invoice, you can do this via the id (UUID).
 
 ```go
 // Invoice is to get a invoice by id
-invoice, err := Invoice("0cf8142b-6f54-4c96-9766-6f44a9a4814b", "token")
+invoice, err := client.Invoice("0cf8142b-6f54-4c96-9766-6f44a9a4814b")
 if err != nil {
     fmt.Println(err)
 } else {
@@ -225,7 +240,7 @@ body := golexoffice.InvoiceBody{
         "Very nice article!",
         1,
         "Stück",
-		golexoffice.InvoiceBodyUnitPrice{
+        golexoffice.InvoiceBodyUnitPrice{
             "EUR",
             13.4,
             15.59,
@@ -255,7 +270,7 @@ body := golexoffice.InvoiceBody{
     golexoffice.InvoiceBodyPaymentConditions{
         "Please pay within the next 30 days.",
         30,
-		golexoffice.InvoiceBodyPaymentDiscountConditions{
+        golexoffice.InvoiceBodyPaymentDiscountConditions{
             0,
             0,
         },
@@ -271,7 +286,7 @@ body := golexoffice.InvoiceBody{
 }
 
 // Create new contact
-invoice, err := golexoffice.AddInvoice(body, "token")
+invoice, err := client.AddInvoice(body)
 if err != nil {
     fmt.Println(err)
 } else {
@@ -292,8 +307,8 @@ if err != nil {
     fmt.Println(err)
 }
 
-// Files is to create a new file
-files, err := golexoffice.AddFile(file, "Rechnung 201912101300005.pdf", "token")
+// upload the file to LexOffice
+files, err := client.AddFile(file, "Rechnung 201912101300005.pdf")
 if err != nil {
     fmt.Println(err)
 } else {

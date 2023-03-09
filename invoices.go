@@ -1,6 +1,6 @@
 //**********************************************************
 //
-// Copyright (C) 2018 - 2021 J&J Ideenschmiede GmbH <info@jj-ideenschmiede.de>
+// Copyright (C) 2018 - 2023 J&J Ideenschmiede GmbH <info@jj-ideenschmiede.de>
 //
 // This file is part of golexoffice.
 // All code may be used. Feel free and maybe code something better.
@@ -119,13 +119,13 @@ type InvoiceReturn struct {
 }
 
 // Invoice is to get a invoice by id
-func Invoice(id, token string) (InvoiceBody, error) {
+func (c *Config) Invoice(id string) (InvoiceBody, error) {
 
 	// Set config for new request
-	c := Config{"/v1/invoices/" + id, "GET", token, "application/json", nil}
+	//c := NewConfig(, token, &http.Client{})
 
 	// Send request
-	response, err := c.Send()
+	response, err := c.Send("/v1/invoices/"+id, nil, "GET", "application/json")
 	if err != nil {
 		return InvoiceBody{}, err
 	}
@@ -134,6 +134,9 @@ func Invoice(id, token string) (InvoiceBody, error) {
 	defer response.Body.Close()
 
 	read, err := io.ReadAll(response.Body)
+	if err != nil {
+		return InvoiceBody{}, err
+	}
 	fmt.Println(string(read))
 
 	// Decode data
@@ -150,7 +153,7 @@ func Invoice(id, token string) (InvoiceBody, error) {
 }
 
 // AddInvoice is to create a invoice
-func AddInvoice(body InvoiceBody, token string) (InvoiceReturn, error) {
+func (c *Config) AddInvoice(body InvoiceBody) (InvoiceReturn, error) {
 
 	// Convert body
 	convert, err := json.Marshal(body)
@@ -159,10 +162,10 @@ func AddInvoice(body InvoiceBody, token string) (InvoiceReturn, error) {
 	}
 
 	// Set config for new request
-	c := Config{"/v1/invoices", "POST", token, "application/json", bytes.NewBuffer(convert)}
+	//c := NewConfig(, token, &http.Client{})
 
 	// Send request
-	response, err := c.Send()
+	response, err := c.Send("/v1/invoices", bytes.NewBuffer(convert), "POST", "application/json")
 	if err != nil {
 		return InvoiceReturn{}, err
 	}
