@@ -1,4 +1,4 @@
-module github.com/jjideenschmiede/golexoffice
+module github.com/hostwithquantum/golexoffice
 
 go 1.19
 

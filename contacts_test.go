@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/jjideenschmiede/golexoffice"
+	"github.com/hostwithquantum/golexoffice"
 	"github.com/stretchr/testify/assert"
 )
 
