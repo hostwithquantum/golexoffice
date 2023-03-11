@@ -32,8 +32,8 @@ type ContactsReturnContent struct {
 	Id             string                    `json:"id,omitempty"`
 	Version        int                       `json:"version,omitempty"`
 	Roles          ContactBodyRoles          `json:"roles"`
-	Company        ContactBodyCompany        `json:"company,omitempty"`
-	Person         ContactBodyPerson         `json:"person,omitempty"`
+	Company        *ContactBodyCompany       `json:"company,omitempty"`
+	Person         *ContactBodyPerson        `json:"person,omitempty"`
 	Addresses      ContactBodyAddresses      `json:"addresses"`
 	EmailAddresses ContactBodyEmailAddresses `json:"emailAddresses"`
 	PhoneNumbers   ContactBodyPhoneNumbers   `json:"phoneNumbers"`
@@ -117,21 +117,21 @@ type ContactsReturnSort struct {
 
 // ContactBody is to create a new contact
 type ContactBody struct {
-	Id             string                    `json:"id,omitempty"`
-	Version        int                       `json:"version,omitempty"`
-	Roles          ContactBodyRoles          `json:"roles"`
-	Company        ContactBodyCompany        `json:"company,omitempty"`
-	Person         ContactBodyPerson         `json:"person,omitempty"`
-	Addresses      ContactBodyAddresses      `json:"addresses"`
-	EmailAddresses ContactBodyEmailAddresses `json:"emailAddresses"`
-	PhoneNumbers   ContactBodyPhoneNumbers   `json:"phoneNumbers"`
-	Note           string                    `json:"note"`
-	Archived       bool                      `json:"archived,omitempty"`
+	Id             string                     `json:"id,omitempty"`
+	Version        int                        `json:"version"`
+	Roles          ContactBodyRoles           `json:"roles"`
+	Company        *ContactBodyCompany        `json:"company,omitempty"`
+	Person         *ContactBodyPerson         `json:"person,omitempty"`
+	Addresses      *ContactBodyAddresses      `json:"addresses,omitempty"`
+	EmailAddresses *ContactBodyEmailAddresses `json:"emailAddresses,omitempty"`
+	PhoneNumbers   *ContactBodyPhoneNumbers   `json:"phoneNumbers,omitempty"`
+	Note           string                     `json:"note"`
+	Archived       bool                       `json:"archived,omitempty"`
 }
 
 type ContactBodyRoles struct {
-	Customer ContactBodyCustomer `json:"customer"`
-	Vendor   ContactBodyVendor   `json:"vendor"`
+	Customer *ContactBodyCustomer `json:"customer,omitempty"`
+	Vendor   *ContactBodyVendor   `json:"vendor,omitempty"`
 }
 
 type ContactBodyCustomer struct {
@@ -143,11 +143,11 @@ type ContactBodyVendor struct {
 }
 
 type ContactBodyCompany struct {
-	Name                 string                      `json:"name"`
-	TaxNumber            string                      `json:"taxNumber"`
-	VatRegistrationId    string                      `json:"vatRegistrationId"`
-	AllowTaxFreeInvoices bool                        `json:"allowTaxFreeInvoices"`
-	ContactPersons       []ContactBodyContactPersons `json:"contactPersons"`
+	Name                 string                       `json:"name"`
+	TaxNumber            string                       `json:"taxNumber,omitempty"`
+	VatRegistrationId    string                       `json:"vatRegistrationId,omitempty"`
+	AllowTaxFreeInvoices bool                         `json:"allowTaxFreeInvoices"`
+	ContactPersons       []*ContactBodyContactPersons `json:"contactPersons"`
 }
 
 type ContactBodyPerson struct {
@@ -165,8 +165,8 @@ type ContactBodyContactPersons struct {
 }
 
 type ContactBodyAddresses struct {
-	Billing  []ContactBodyBilling  `json:"billing"`
-	Shipping []ContactBodyShipping `json:"shipping"`
+	Billing  []*ContactBodyBilling  `json:"billing"`
+	Shipping []*ContactBodyShipping `json:"shipping"`
 }
 
 type ContactBodyBilling struct {

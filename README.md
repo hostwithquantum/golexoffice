@@ -62,10 +62,10 @@ body := golexoffice.ContactBody{
     "",
     0,
     golexoffice.ContactBodyRoles{
-        golexoffice.ContactBodyCustomer{},
-        golexoffice.ContactBodyVendor{},
+        &golexoffice.ContactBodyCustomer{},
+        &golexoffice.ContactBodyVendor{},
     },
-    golexoffice.ContactBodyCompany{
+    &golexoffice.ContactBodyCompany{
         "J&J Ideenschmiede GmbH",
         "12345/12345",
         "DE123456789",
@@ -79,14 +79,14 @@ body := golexoffice.ContactBody{
         }},
     },
     golexoffice.ContactBodyAddresses{
-        []golexoffice.ContactBodyBilling{{
+        []&golexoffice.ContactBodyBilling{{
             "Rechnungsadressenzusatz",
             "Fährstraße 31",
             "21502",
             "Geesthacht",
             "DE",
         }},
-        []golexoffice.ContactBodyShipping{{
+        []&golexoffice.ContactBodyShipping{{
             "Lieferadressenzusatz",
             "Fährstraße 31",
             "21502",
@@ -130,15 +130,15 @@ body := golexoffice.ContactBody{
     "ID",
     1,
     golexoffice.ContactBodyRoles{
-        golexoffice.ContactBodyCustomer{},
-        golexoffice.ContactBodyVendor{},
+        &golexoffice.ContactBodyCustomer{},
+        &golexoffice.ContactBodyVendor{},
     },
     golexoffice.ContactBodyCompany{
         "J&J Ideenschmiede GmbH",
         "12345/12345",
         "DE123456789",
         true,
-        []golexoffice.ContactBodyContactPersons{{
+        []&golexoffice.ContactBodyContactPersons{{
             "Herr",
             "Jonas",
             "Kwiedor",
@@ -147,14 +147,14 @@ body := golexoffice.ContactBody{
         }},
     },
     golexoffice.ContactBodyAddresses{
-        []golexoffice.ContactBodyBilling{{
+        []&golexoffice.ContactBodyBilling{{
             "Rechnungsadressenzusatz",
             "Fährstraße 31",
             "21502",
             "Geesthacht",
             "DE",
         }},
-        []golexoffice.ContactBodyShipping{{
+        []&golexoffice.ContactBodyShipping{{
             "Lieferadressenzusatz",
             "Fährstraße 31",
             "21502",
