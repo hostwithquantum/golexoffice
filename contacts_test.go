@@ -18,10 +18,11 @@ func TestAddContact(t *testing.T) {
 	config.SetBaseUrl(server.URL)
 
 	resp, err := config.AddContact(golexoffice.ContactBody{
+		Version: 0,
 		Roles: golexoffice.ContactBodyRoles{
-			Customer: golexoffice.ContactBodyCustomer{},
+			Customer: &golexoffice.ContactBodyCustomer{},
 		},
-		Person: golexoffice.ContactBodyPerson{
+		Person: &golexoffice.ContactBodyPerson{
 			FirstName: "Thomas",
 			LastName:  "Mustermann",
 		},
