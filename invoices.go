@@ -156,6 +156,16 @@ func (c *Config) Invoice(id string) (InvoiceBody, error) {
 // AddInvoice is to create a invoice
 func (c *Config) AddInvoice(body InvoiceBody) (InvoiceReturn, error) {
 
+	// NOTE: we're using VoucherStatus ("open" or "draft") to determine if this
+	// should be a draft invoice
+	//
+	// The way the API works is this: (https://developers.lexoffice.io/docs/#invoices-endpoint-create-an-invoice)
+	// > Invoices transmitted via the API are created in draft mode per default. To
+	// > create a finalized invoice with status open the optional query parameter
+	// > finalize has to be set. The status of an invoice cannot be changed via the api.
+	isOpen := body.VoucherStatus == "open"
+	body.VoucherStatus = "" // unset for the request
+
 	// Convert body
 	convert, err := json.Marshal(body)
 	if err != nil {
@@ -166,7 +176,11 @@ func (c *Config) AddInvoice(body InvoiceBody) (InvoiceReturn, error) {
 	//c := NewConfig(, token, &http.Client{})
 
 	// Send request
-	response, err := c.Send("/v1/invoices", bytes.NewBuffer(convert), "POST", "application/json")
+	url := "/v1/invoices"
+	if isOpen {
+		url += "?finalize=true"
+	}
+	response, err := c.Send(url, bytes.NewBuffer(convert), "POST", "application/json")
 	if err != nil {
 		return InvoiceReturn{}, err
 	}
