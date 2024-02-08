@@ -40,6 +40,7 @@ type InvoiceBody struct {
 	Title              string                        `json:"title"`
 	Introduction       string                        `json:"introduction"`
 	Remark             string                        `json:"remark"`
+	Language           string                        `json:"language"`
 }
 
 type InvoiceBodyAddress struct {
