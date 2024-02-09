@@ -29,18 +29,47 @@ func TestErrorResponse(t *testing.T) {
 			},
 		})
 		assert.Error(t, err)
+		assert.ErrorContains(t, err, "key: missing_entity (company.vatRegistrationId): validation_failure")
+		assert.ErrorContains(t, err, "key: missing_entity (company.taxNumber): validation_failure")
 	})
 
 	t.Run("errors=new", func(t *testing.T) {
 		_, err := lexOffice.AddInvoice(golexoffice.InvoiceBody{})
 		assert.Error(t, err)
+		assert.ErrorContains(t, err, "field: lineItems[0].unitPrice.taxRatePercentage (NOTNULL): darf nicht leer sein")
 	})
 
 }
 
+func TestErrorNoDetails(t *testing.T) {
+	server := errorMockNoDetails()
+	defer server.Close()
+
+	lexOffice := golexoffice.NewConfig("token", nil)
+	lexOffice.SetBaseUrl(server.URL)
+
+	t.Run("errors=legacy", func(t *testing.T) {
+		_, err := lexOffice.AddContact(golexoffice.ContactBody{
+			Company: &golexoffice.ContactBodyCompany{
+				Name:              "company",
+				VatRegistrationId: "",
+				TaxNumber:         "",
+			},
+		})
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "something went wrong")
+	})
+
+	t.Run("errors=new", func(t *testing.T) {
+		_, err := lexOffice.AddInvoice(golexoffice.InvoiceBody{})
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "Something else went wrong. (406 Not Acceptable)")
+	})
+}
+
 func errorMock() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/v1/contacts" {
+		if r.URL.Path == "/v1/contacts/" {
 			w.WriteHeader(http.StatusBadRequest)
 			//nolint:errcheck
 			w.Write([]byte(`{
@@ -69,6 +98,36 @@ func errorMock() *httptest.Server {
 						"message": "darf nicht leer sein"
 					}
 				]
+			}`))
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}))
+}
+
+func errorMockNoDetails() *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/v1/contacts/" {
+			w.WriteHeader(http.StatusBadRequest)
+			// unclear if this can actually happen for these legacy errors
+			//nolint:errcheck
+			w.Write([]byte(`{
+				"requestId":"75d4dad6-6ccb-40fd-8c22-797f2d421d98",
+				"IssueList":[]
+			}`))
+			return
+		}
+		if r.URL.Path == "/v1/invoices" {
+			w.WriteHeader(http.StatusNotAcceptable)
+			// this *can* and *does* happen however (details is optional)
+			//nolint:errcheck
+			w.Write([]byte(`{
+				"timestamp": "2017-05-11T17:12:31.233+02:00",
+				"status": 406,
+				"error": "Not Acceptable",
+				"path": "/v1/invoices",
+				"traceId": "90d78d0777be",
+				"message": "Something else went wrong."
 			}`))
 			return
 		}

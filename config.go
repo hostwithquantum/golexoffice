@@ -95,12 +95,16 @@ func parseErrorResponse(response *http.Response) error {
 	if err != nil {
 		return fmt.Errorf("decoding error while unpacking response: %s", err)
 	}
+	defer response.Body.Close()
 
 	var keep []error
 	for _, detail := range errorResp.Details {
 		keep = append(keep, fmt.Errorf(
 			"field: %s (%s): %s", detail.Field, detail.Violation, detail.Message,
 		))
+	}
+	if len(keep) == 0 {
+		return fmt.Errorf("error: %s (%d %s)", errorResp.Message, errorResp.Status, errorResp.Error)
 	}
 
 	return errors.Join(keep...)
@@ -112,11 +116,15 @@ func parseLegacyErrorResponse(response *http.Response) error {
 	if err != nil {
 		return fmt.Errorf("decoding error while unpacking response: %s", err)
 	}
+	defer response.Body.Close()
 
 	// potentially multiple issues returned from the LexOffice API
 	var keep []error
 	for _, issue := range errorResp.IssueList {
 		keep = append(keep, fmt.Errorf("key: %s (%s): %s", issue.Key, issue.Source, issue.Type))
+	}
+	if len(keep) == 0 {
+		return fmt.Errorf("something went wrong but unclear what (empty IssueList)")
 	}
 	return errors.Join(keep...)
 }
