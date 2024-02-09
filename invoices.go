@@ -20,66 +20,66 @@ import (
 
 // InvoiceBody is to define body data
 type InvoiceBody struct {
-	Id                 string                        `json:"id"`
-	OrganizationId     string                        `json:"organizationId"`
-	CreateDate         string                        `json:"createDate"`
-	UpdatedDate        string                        `json:"updatedDate"`
-	Version            int                           `json:"version"`
-	Archived           bool                          `json:"archived"`
-	VoucherStatus      string                        `json:"voucherStatus"`
-	VoucherNumber      string                        `json:"voucherNumber"`
+	Id                 string                        `json:"id,omitempty"`
+	OrganizationId     string                        `json:"organizationId,omitempty"`
+	CreateDate         string                        `json:"createDate,omitempty"`
+	UpdatedDate        string                        `json:"updatedDate,omitempty"`
+	Version            int                           `json:"version,omitempty"`
+	Archived           bool                          `json:"archived,omitempty"`
+	VoucherStatus      string                        `json:"voucherStatus,omitempty"`
+	VoucherNumber      string                        `json:"voucherNumber,omitempty"`
 	VoucherDate        string                        `json:"voucherDate"`
-	DueDate            interface{}                   `json:"dueDate"`
+	DueDate            interface{}                   `json:"dueDate,omitempty"`
 	Address            InvoiceBodyAddress            `json:"address"`
 	LineItems          []InvoiceBodyLineItems        `json:"lineItems"`
 	TotalPrice         InvoiceBodyTotalPrice         `json:"totalPrice"`
-	TaxAmounts         []InvoiceBodyTaxAmounts       `json:"taxAmounts"`
+	TaxAmounts         []InvoiceBodyTaxAmounts       `json:"taxAmounts,omitempty"`
 	TaxConditions      InvoiceBodyTaxConditions      `json:"taxConditions"`
-	PaymentConditions  InvoiceBodyPaymentConditions  `json:"paymentConditions"`
+	PaymentConditions  *InvoiceBodyPaymentConditions  `json:"paymentConditions,omitempty"`
 	ShippingConditions InvoiceBodyShippingConditions `json:"shippingConditions"`
-	Title              string                        `json:"title"`
-	Introduction       string                        `json:"introduction"`
-	Remark             string                        `json:"remark"`
-	Language           string                        `json:"language"`
+	Title              string                        `json:"title,omitempty"`
+	Introduction       string                        `json:"introduction,omitempty"`
+	Remark             string                        `json:"remark,omitempty"`
+	Language           string                        `json:"language,omitempty"`
 }
 
 type InvoiceBodyAddress struct {
-	ContactId   string `json:"contactId"`
-	Name        string `json:"name"`
-	Supplement  string `json:"supplement"`
-	Street      string `json:"street"`
-	City        string `json:"city"`
-	Zip         string `json:"zip"`
-	CountryCode string `json:"countryCode"`
+	ContactId   string `json:"contactId,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Supplement  string `json:"supplement,omitempty"`
+	Street      string `json:"street,omitempty"`
+	City        string `json:"city,omitempty"`
+	Zip         string `json:"zip,omitempty"`
+	CountryCode string `json:"countryCode,omitempty"`
 }
 
 type InvoiceBodyLineItems struct {
 	Id                 string               `json:"id,omitempty"`
 	Type               string               `json:"type"`
 	Name               string               `json:"name"`
-	Description        string               `json:"description"`
-	Quantity           float64              `json:"quantity"`
-	UnitName           string               `json:"unitName"`
-	UnitPrice          InvoiceBodyUnitPrice `json:"unitPrice"`
-	DiscountPercentage int                  `json:"discountPercentage"`
-	LineItemAmount     float64              `json:"lineItemAmount"`
+	Description        string               `json:"description,omitempty"`
+	Quantity           float64              `json:"quantity,omitempty"`
+	UnitName           string               `json:"unitName,omitempty"`
+	UnitPrice          InvoiceBodyUnitPrice `json:"unitPrice,omitempty"`
+	DiscountPercentage int                  `json:"discountPercentage,omitempty"`
+	LineItemAmount     float64              `json:"lineItemAmount,omitempty"`
 }
 
 type InvoiceBodyUnitPrice struct {
 	Currency          string  `json:"currency"`
-	NetAmount         float64 `json:"netAmount"`
-	GrossAmount       float64 `json:"grossAmount"`
+	NetAmount         float64 `json:"netAmount,omitempty"`
+	GrossAmount       float64 `json:"grossAmount,omitempty"`
 	TaxRatePercentage int     `json:"taxRatePercentage"`
 }
 
 type InvoiceBodyTotalPrice struct {
 	Currency                string      `json:"currency"`
-	TotalNetAmount          float64     `json:"totalNetAmount"`
-	TotalGrossAmount        float64     `json:"totalGrossAmount"`
-	TaxRatePercentage       interface{} `json:"taxRatePercentage"`
-	TotalTaxAmount          float64     `json:"totalTaxAmount"`
-	TotalDiscountAbsolute   interface{} `json:"totalDiscountAbsolute"`
-	TotalDiscountPercentage interface{} `json:"totalDiscountPercentage"`
+	TotalNetAmount          float64     `json:"totalNetAmount,omitempty"`
+	TotalGrossAmount        float64     `json:"totalGrossAmount,omitempty"`
+	TaxRatePercentage       interface{} `json:"taxRatePercentage,omitempty"`
+	TotalTaxAmount          float64     `json:"totalTaxAmount,omitempty"`
+	TotalDiscountAbsolute   interface{} `json:"totalDiscountAbsolute,omitempty"`
+	TotalDiscountPercentage interface{} `json:"totalDiscountPercentage,omitempty"`
 }
 
 type InvoiceBodyTaxAmounts struct {
@@ -90,7 +90,7 @@ type InvoiceBodyTaxAmounts struct {
 
 type InvoiceBodyTaxConditions struct {
 	TaxType     string      `json:"taxType"`
-	TaxTypeNote interface{} `json:"taxTypeNote"`
+	TaxTypeNote interface{} `json:"taxTypeNote,omitempty"`
 }
 
 type InvoiceBodyPaymentConditions struct {
@@ -105,8 +105,8 @@ type InvoiceBodyPaymentDiscountConditions struct {
 }
 
 type InvoiceBodyShippingConditions struct {
-	ShippingDate    string      `json:"shippingDate"`
-	ShippingEndDate interface{} `json:"shippingEndDate"`
+	ShippingDate    string      `json:"shippingDate,omitempty"`
+	ShippingEndDate interface{} `json:"shippingEndDate,omitempty"`
 	ShippingType    string      `json:"shippingType"`
 }
 
