@@ -267,7 +267,7 @@ body := golexoffice.InvoiceBody{
         "net",
         nil,
     },
-    golexoffice.InvoiceBodyPaymentConditions{
+    &golexoffice.InvoiceBodyPaymentConditions{
         "Please pay within the next 30 days.",
         30,
         golexoffice.InvoiceBodyPaymentDiscountConditions{
