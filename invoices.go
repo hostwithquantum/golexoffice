@@ -35,7 +35,7 @@ type InvoiceBody struct {
 	TotalPrice         InvoiceBodyTotalPrice         `json:"totalPrice"`
 	TaxAmounts         []InvoiceBodyTaxAmounts       `json:"taxAmounts,omitempty"`
 	TaxConditions      InvoiceBodyTaxConditions      `json:"taxConditions"`
-	PaymentConditions  *InvoiceBodyPaymentConditions  `json:"paymentConditions,omitempty"`
+	PaymentConditions  *InvoiceBodyPaymentConditions `json:"paymentConditions,omitempty"`
 	ShippingConditions InvoiceBodyShippingConditions `json:"shippingConditions"`
 	Title              string                        `json:"title,omitempty"`
 	Introduction       string                        `json:"introduction,omitempty"`
@@ -58,26 +58,26 @@ type InvoiceBodyLineItems struct {
 	Type               string               `json:"type"`
 	Name               string               `json:"name"`
 	Description        string               `json:"description,omitempty"`
-	Quantity           float64              `json:"quantity,omitempty"`
+	Quantity           interface{}          `json:"quantity,omitempty"`
 	UnitName           string               `json:"unitName,omitempty"`
 	UnitPrice          InvoiceBodyUnitPrice `json:"unitPrice,omitempty"`
-	DiscountPercentage int                  `json:"discountPercentage,omitempty"`
-	LineItemAmount     float64              `json:"lineItemAmount,omitempty"`
+	DiscountPercentage interface{}          `json:"discountPercentage,omitempty"`
+	LineItemAmount     interface{}          `json:"lineItemAmount,omitempty"`
 }
 
 type InvoiceBodyUnitPrice struct {
-	Currency          string  `json:"currency"`
-	NetAmount         float64 `json:"netAmount,omitempty"`
-	GrossAmount       float64 `json:"grossAmount,omitempty"`
-	TaxRatePercentage int     `json:"taxRatePercentage"`
+	Currency          string      `json:"currency"`
+	NetAmount         interface{} `json:"netAmount,omitempty"`
+	GrossAmount       interface{} `json:"grossAmount,omitempty"`
+	TaxRatePercentage int         `json:"taxRatePercentage"`
 }
 
 type InvoiceBodyTotalPrice struct {
 	Currency                string      `json:"currency"`
-	TotalNetAmount          float64     `json:"totalNetAmount,omitempty"`
-	TotalGrossAmount        float64     `json:"totalGrossAmount,omitempty"`
+	TotalNetAmount          interface{} `json:"totalNetAmount,omitempty"`
+	TotalGrossAmount        interface{} `json:"totalGrossAmount,omitempty"`
 	TaxRatePercentage       interface{} `json:"taxRatePercentage,omitempty"`
-	TotalTaxAmount          float64     `json:"totalTaxAmount,omitempty"`
+	TotalTaxAmount          interface{} `json:"totalTaxAmount,omitempty"`
 	TotalDiscountAbsolute   interface{} `json:"totalDiscountAbsolute,omitempty"`
 	TotalDiscountPercentage interface{} `json:"totalDiscountPercentage,omitempty"`
 }
