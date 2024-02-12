@@ -16,10 +16,12 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 const (
-	baseURL = "https://api.lexoffice.io"
+	baseURL           = "https://api.lexoffice.io"
+	maxRateLimitTries = 3
 )
 
 // Config is to define the request data
@@ -66,15 +68,26 @@ func (c *Config) Send(path string, body io.Reader, method, contentType string) (
 	request.Header.Set("Content-Type", contentType)
 	request.Header.Set("Accept", "application/json")
 
+	var response *http.Response
 	// Send request & get response
-	response, err := c.client.Do(request)
-	if err != nil {
-		return nil, err
-	}
+	for i := 1; ; i++ {
+		response, err = c.client.Do(request)
+		if err != nil {
+			return nil, err
+		}
 
-	if isSuccessful(response) {
-		// Return data
-		return response, nil
+		if isSuccessful(response) {
+			// Return data
+			return response, nil
+		} else if hitRateLimit(response) {
+			if i > maxRateLimitTries {
+				break
+			}
+			// max 2 requests per second, so let's wait a bit and try again
+			time.Sleep(500 * time.Duration(i) * time.Millisecond)
+		} else {
+			break
+		}
 	}
 
 	// TODO(till): revisit parsing when we add more API endpoints
@@ -87,6 +100,10 @@ func (c *Config) Send(path string, body io.Reader, method, contentType string) (
 
 func isSuccessful(response *http.Response) bool {
 	return response.StatusCode < 400
+}
+
+func hitRateLimit(response *http.Response) bool {
+	return response.StatusCode == 429
 }
 
 func parseErrorResponse(response *http.Response) error {
