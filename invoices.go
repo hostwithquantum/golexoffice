@@ -14,8 +14,6 @@ package golexoffice
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"io"
 )
 
 // InvoiceBody is to define body data
@@ -133,12 +131,6 @@ func (c *Config) Invoice(id string) (InvoiceBody, error) {
 
 	// Close request
 	defer response.Body.Close()
-
-	read, err := io.ReadAll(response.Body)
-	if err != nil {
-		return InvoiceBody{}, err
-	}
-	fmt.Println(string(read))
 
 	// Decode data
 	var decode InvoiceBody

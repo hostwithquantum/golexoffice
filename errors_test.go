@@ -73,6 +73,7 @@ func TestRateLimit(t *testing.T) {
 		if rateLimitHits > 0 {
 			rateLimitHits -= 1
 			w.WriteHeader(http.StatusTooManyRequests)
+			//nolint:errcheck
 			w.Write([]byte(`{
 				"status": 429,
 				"error": "Too Many Requests",
