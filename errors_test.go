@@ -67,6 +67,42 @@ func TestErrorNoDetails(t *testing.T) {
 	})
 }
 
+func TestRateLimit(t *testing.T) {
+	rateLimitHits := 10
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if rateLimitHits > 0 {
+			rateLimitHits -= 1
+			w.WriteHeader(http.StatusTooManyRequests)
+			//nolint:errcheck
+			w.Write([]byte(`{
+				"status": 429,
+				"error": "Too Many Requests",
+				"message": "Rate limit exceeded"
+			}`))
+		} else {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`{}`)) //nolint:errcheck
+		}
+	}))
+	defer server.Close()
+
+	lexOffice := golexoffice.NewConfig("token", nil)
+	lexOffice.SetBaseUrl(server.URL)
+
+	t.Run("retry until ok", func(t *testing.T) {
+		rateLimitHits = 2
+		_, err := lexOffice.Invoice("tralalala")
+		assert.NoError(t, err)
+	})
+
+	t.Run("retry until out of retries", func(t *testing.T) {
+		rateLimitHits = 10
+		_, err := lexOffice.Invoice("tralalala")
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "Rate limit exceeded")
+	})
+}
+
 func errorMock() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/v1/contacts/" {
